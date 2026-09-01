@@ -1,0 +1,140 @@
+<div class="skill-gap-container" *ngIf="!loading; else loadingTemplate">
+  <div class="page-header">
+    <h1 class="page-title">Skill Gap Analysis</h1>
+    <div class="nav-buttons">
+      <button mat-raised-button routerLink="/dashboard">
+        <mat-icon>arrow_back</mat-icon> Back to Dashboard
+      </button>
+      <button mat-raised-button color="primary" [routerLink]="['/analysis', resumeId]">Back to Analysis</button>
+      <button mat-raised-button color="accent" [routerLink]="['/jobs', resumeId]">Job Recommendations</button>
+    </div>
+  </div>
+
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <mat-card class="score-card overall" *ngIf="result">
+    <div class="overall-content">
+      <div class="overall-score">
+        <span class="big-num">{{ result.overallSkillMatchScore }}</span>
+        <span class="label">% Overall Match</span>
+      </div>
+      <div class="overall-text">
+        <h3>Your skills match the current job market</h3>
+        <p *ngIf="result.analysisInsights">{{ result.analysisInsights }}</p>
+        <p *ngIf="!result.analysisInsights">Based on an average of your profile vs. top job postings in your field.</p>
+      </div>
+    </div>
+  </mat-card>
+
+  <div class="two-col" *ngIf="result">
+    <mat-card class="detail-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon color="primary">check_circle</mat-icon> Skills You Have
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="chip-row">
+          <mat-chip *ngFor="let skill of result.presentSkills" class="present-chip">{{ skill }}</mat-chip>
+          <p *ngIf="result.presentSkills.length === 0" class="empty-note">No matching skill information found yet.</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="detail-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon color="warn">priority_high</mat-icon> Critical Gaps
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="chip-row">
+          <mat-chip *ngFor="let skill of result.criticalGaps" class="critical-chip">
+            <mat-icon>trending_up</mat-icon> {{ skill }}
+          </mat-chip>
+          <p *ngIf="result.criticalGaps.length === 0" class="empty-note">No critical gaps identified!</p>
+        </div>
+        <p *ngIf="result.criticalGaps.length > 0" class="tip">
+          <mat-icon>lightbulb</mat-icon>
+          These are the most important skills to develop for career advancement.
+        </p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Learning Path Section -->
+  <mat-card class="learning-path-card" *ngIf="result && result.learningPath && result.learningPath.length > 0">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon color="accent">school</mat-icon> Personalized Learning Path
+      </mat-card-title>
+      <mat-card-subtitle>Recommended steps to close skill gaps, in order of priority</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="learning-steps">
+        <div class="step" *ngFor="let step of result.learningPath; let i = index" [attr.data-priority]="step.priority">
+          <div class="step-number">{{ i + 1 }}</div>
+          <div class="step-content">
+            <div class="step-header">
+              <h4>{{ step.skill }}</h4>
+              <div class="step-meta">
+                <mat-chip 
+                  [color]="getPriorityColor(step.priority)" 
+                  selected>
+                  <mat-icon>{{ getPriorityIcon(step.priority) }}</mat-icon>
+                  {{ step.priority }} Priority
+                </mat-chip>
+                <span class="estimate">
+                  <mat-icon>schedule</mat-icon> {{ step.estimatedWeeks }} weeks
+                </span>
+              </div>
+            </div>
+            <p class="step-description">{{ step.description }}</p>
+            <div class="step-resources" *ngIf="step.resources && step.resources.length > 0">
+              <strong>Resources:</strong>
+              <ul>
+                <li *ngFor="let resource of step.resources">{{ resource }}</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Recommended Jobs Section -->
+  <mat-card class="jobs-preview-card" *ngIf="result && result.recommendedJobs && result.recommendedJobs.length > 0">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>work</mat-icon> Target Job Opportunities
+      </mat-card-title>
+      <mat-card-subtitle>Jobs that match your current and developing skills</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="jobs-preview">
+        <div class="job-preview" *ngFor="let job of result.recommendedJobs | slice:0:5">
+          <h5>{{ job.title }} at {{ job.company }}</h5>
+          <p class="location">
+            <mat-icon>location_on</mat-icon> {{ job.location }}
+          </p>
+          <div class="match-score">
+            <span class="score-label">Match:</span>
+            <span class="score-value" [class.high]="job.matchScore >= 75" [class.medium]="job.matchScore >= 50">
+              {{ job.matchScore }}%
+            </span>
+          </div>
+        </div>
+      </div>
+      <button mat-raised-button color="accent" [routerLink]="['/jobs', resumeId]" class="view-all-btn">
+        View All Job Recommendations
+      </button>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<ng-template #loadingTemplate>
+  <div class="loading">
+    <mat-spinner></mat-spinner>
+    <p>Analyzing skill gaps with AI...</p>
+  </div>
+</ng-template>

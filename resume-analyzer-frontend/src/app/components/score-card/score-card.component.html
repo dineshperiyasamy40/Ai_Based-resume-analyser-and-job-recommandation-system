@@ -1,0 +1,20 @@
+<div class="card" [class.excellent]="score >= 85" [class.good]="score >= 70 && score < 85" [class.average]="score >= 50 && score < 70" [class.poor]="score < 50">
+  <div class="card-header">
+    <mat-icon class="icon">{{ icon }}</mat-icon>
+    <span class="title">{{ title }}</span>
+  </div>
+  <div class="ring-wrap">
+    <svg class="ring" viewBox="0 0 120 120">
+      <circle class="ring-bg" cx="60" cy="60" r="52" />
+      <circle class="ring-fg" cx="60" cy="60" r="52" [style]="ringStyle" />
+    </svg>
+    <div class="score-value">
+      <span class="num">{{ score }}</span>
+      <span class="total">/100</span>
+    </div>
+  </div>
+  <div class="status">
+    <mat-icon>{{ statusIcon }}</mat-icon>
+    <span>{{ statusText }}</span>
+  </div>
+</div>

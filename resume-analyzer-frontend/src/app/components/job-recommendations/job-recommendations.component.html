@@ -1,0 +1,103 @@
+<div class="jobs-container" *ngIf="!loading; else loadingTemplate">
+  <div class="page-header">
+    <h1 class="page-title">Job Recommendations</h1>
+    <p class="subtitle">Jobs matched to your skills, ranked by compatibility</p>
+    <div class="nav-buttons">
+      <button mat-raised-button routerLink="/dashboard">
+        <mat-icon>arrow_back</mat-icon> Back to Dashboard
+      </button>
+      <button mat-raised-button color="primary" [routerLink]="['/analysis', resumeId]">Back to Analysis</button>
+      <button mat-raised-button color="accent" [routerLink]="['/skills', resumeId]">View Skill Gap</button>
+    </div>
+  </div>
+
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <div class="job-list" *ngIf="!error && jobs.length > 0">
+    <mat-card class="job-card" *ngFor="let job of jobs">
+      <div class="job-main">
+        <div class="match-indicator">
+          <div class="match-ring" [style.borderColor]="scoreColor(job.matchScore)">
+            <span class="match-num" [style.color]="scoreColor(job.matchScore)">{{ job.matchScore }}%</span>
+          </div>
+          <span class="match-label">Match</span>
+        </div>
+
+        <div class="job-info">
+          <div class="job-title-row">
+            <h3 class="job-title">{{ job.title }}</h3>
+            <mat-chip class="seniority-chip" *ngIf="job.seniority">
+              <mat-icon>trending_up</mat-icon> {{ job.seniority }}
+            </mat-chip>
+          </div>
+          <div class="job-meta">
+            <span class="meta-chip"><mat-icon>business</mat-icon> {{ job.company }}</span>
+            <span class="meta-chip" *ngIf="job.location"><mat-icon>location_on</mat-icon> {{ job.location }}</span>
+            <span class="meta-chip" *ngIf="job.employmentType"><mat-icon>work</mat-icon> {{ job.employmentType }}</span>
+          </div>
+        </div>
+
+        <a mat-raised-button color="accent" class="apply-btn" [href]="job.url" target="_blank" *ngIf="job.url">
+          Apply
+        </a>
+      </div>
+
+      <!-- AI-Generated Career Justification -->
+      <div class="career-justification" *ngIf="job.careerJustification">
+        <mat-icon color="accent">lightbulb</mat-icon>
+        <p>{{ job.careerJustification }}</p>
+      </div>
+
+      <!-- Required Skills from Ollama -->
+      <div class="required-skills" *ngIf="job.requiredSkills && job.requiredSkills.length > 0">
+        <span class="skills-label">
+          <mat-icon>star</mat-icon> Required Skills:
+        </span>
+        <div class="skills-chips">
+          <mat-chip *ngFor="let s of job.requiredSkills" class="required-chip">
+            <mat-icon>check</mat-icon> {{ s }}
+          </mat-chip>
+        </div>
+      </div>
+
+      <div class="job-details">
+        <div class="skills-row" *ngIf="job.matchedSkills && job.matchedSkills.length > 0">
+          <span class="skills-label">
+            <mat-icon>verified</mat-icon> You Have:
+          </span>
+          <div class="skills-chips">
+            <mat-chip *ngFor="let s of job.matchedSkills" class="matched-chip">{{ s }}</mat-chip>
+          </div>
+        </div>
+        <div class="skills-row" *ngIf="job.missingSkills && job.missingSkills.length > 0">
+          <span class="skills-label">
+            <mat-icon>school</mat-icon> You Need to Learn:
+          </span>
+          <div class="skills-chips">
+            <mat-chip *ngFor="let s of job.missingSkills" class="missing-chip">{{ s }}</mat-chip>
+          </div>
+        </div>
+        <p class="job-desc" *ngIf="job.description">{{ job.description }}</p>
+      </div>
+
+      <div class="job-highlights" *ngIf="job.jobHighlights && job.jobHighlights.length > 0">
+        <mat-icon>info</mat-icon>
+        <ul>
+          <li *ngFor="let highlight of job.jobHighlights">{{ highlight }}</li>
+        </ul>
+      </div>
+    </mat-card>
+  </div>
+
+  <div class="empty" *ngIf="!error && jobs.length === 0">
+    <mat-icon>work_off</mat-icon>
+    <p>No job matches found. Try uploading a more detailed resume.</p>
+  </div>
+</div>
+
+<ng-template #loadingTemplate>
+  <div class="loading">
+    <mat-spinner></mat-spinner>
+    <p>Finding the best jobs for you with AI analysis...</p>
+  </div>
+</ng-template>

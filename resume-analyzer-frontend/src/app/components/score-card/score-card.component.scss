@@ -1,0 +1,122 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-top: 4px solid #ccc;
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.card.excellent {
+  border-top-color: #4caf50;
+}
+
+.card.good {
+  border-top-color: #2196f3;
+}
+
+.card.average {
+  border-top-color: #ff9800;
+}
+
+.card.poor {
+  border-top-color: #f44336;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.card-header .icon {
+  color: #3f51b5;
+}
+
+.card-header .title {
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.ring-wrap {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.ring {
+  width: 120px;
+  height: 120px;
+}
+
+.ring-bg {
+  fill: none;
+  stroke: #eee;
+  stroke-width: 10;
+}
+
+.ring-fg {
+  fill: none;
+  stroke: #3f51b5;
+  stroke-width: 10;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: center;
+  transition: stroke-dashoffset 0.8s ease;
+}
+
+.card.excellent .ring-fg { stroke: #4caf50; }
+.card.good .ring-fg { stroke: #2196f3; }
+.card.average .ring-fg { stroke: #ff9800; }
+.card.poor .ring-fg { stroke: #f44336; }
+
+.score-value {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.score-value .num {
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.score-value .total {
+  font-size: 13px;
+  color: #999;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 12px;
+  color: #666;
+  font-size: 14px;
+}
+
+.status mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.card.excellent .status,
+.card.good .status { color: #4caf50; }
+.card.average .status { color: #ff9800; }
+.card.poor .status { color: #f44336; }

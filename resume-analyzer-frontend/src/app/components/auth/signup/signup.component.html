@@ -1,0 +1,38 @@
+<div class="auth-container">
+  <mat-card class="auth-card">
+    <mat-card-header>
+      <mat-card-title class="title">Create Account</mat-card-title>
+      <mat-card-subtitle>Join to analyze your resume &amp; get job matches</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form (ngSubmit)="onSubmit()" #signupForm="ngForm">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Full Name</mat-label>
+          <input matInput type="text" [(ngModel)]="name" name="name" placeholder="John Doe" required />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" [(ngModel)]="email" name="email" placeholder="you@example.com" required />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Password</mat-label>
+          <input matInput type="password" [(ngModel)]="password" name="password" placeholder="Min 6 characters" required />
+        </mat-form-field>
+
+        <div *ngIf="error" class="error">{{ error }}</div>
+
+        <button mat-raised-button color="primary" type="submit" class="full-width" [disabled]="loading">
+          <mat-spinner *ngIf="loading" diameter="20" class="spinner"></mat-spinner>
+          <span *ngIf="!loading">Create Account</span>
+        </button>
+      </form>
+    </mat-card-content>
+
+    <mat-card-actions class="center">
+      <span>Already have an account? <a routerLink="/login">Sign In</a></span>
+    </mat-card-actions>
+  </mat-card>
+</div>

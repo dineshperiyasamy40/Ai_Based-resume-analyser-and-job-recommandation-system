@@ -1,0 +1,51 @@
+<div class="upload-container">
+  <h1 class="page-title">Upload Your Resume</h1>
+  <p class="page-subtitle">Drop your resume (PDF or DOCX) and get instant scores: quality, ATS compatibility, keywords &amp; skill match</p>
+
+  <mat-card class="upload-card">
+    <div
+      class="dropzone"
+      [class.active]="dragActive"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave()"
+      (drop)="onDrop($event)"
+    >
+      <mat-icon class="upload-icon">cloud_upload</mat-icon>
+      <h3>Drag &amp; drop your resume here</h3>
+      <p>or</p>
+      <input #fileInput type="file" accept=".pdf,.docx,.doc" hidden (change)="onFileSelected($event)" />
+      <button mat-raised-button color="primary" (click)="fileInput.click()">Browse Files</button>
+      <p class="hint">Supported formats: PDF, DOCX</p>
+    </div>
+
+    <div *ngIf="selectedFile && !uploading" class="selected-file">
+      <mat-icon>description</mat-icon>
+      <span>{{ selectedFile.name }}</span>
+      <span class="size">({{ (selectedFile.size / 1024).toFixed(1) }} KB)</span>
+    </div>
+
+    <div *ngIf="error" class="error">{{ error }}</div>
+
+    <div class="actions" *ngIf="!uploading">
+      <button mat-raised-button color="accent" (click)="onSubmit()" [disabled]="!selectedFile">
+        Analyze Resume
+      </button>
+    </div>
+
+    <div *ngIf="uploading" class="processing">
+      <mat-card-title class="processing-title">Analyzing your resume...</mat-card-title>
+
+      <div class="stage-list">
+        <div *ngFor="let stage of stages" class="stage" [class.active]="stage.active" [class.done]="stage.done">
+          <mat-icon class="stage-icon" *ngIf="stage.done">check_circle</mat-icon>
+          <mat-icon class="stage-icon spinning" *ngIf="stage.active && !stage.done">autorenew</mat-icon>
+          <mat-icon class="stage-icon pending" *ngIf="!stage.active && !stage.done">radio_button_unchecked</mat-icon>
+          <span>{{ stage.label }}</span>
+        </div>
+      </div>
+
+      <mat-progress-bar mode="indeterminate" color="primary" class="progress"></mat-progress-bar>
+      <p class="progress-text">{{ uploadProgress }}% uploaded</p>
+    </div>
+  </mat-card>
+</div>

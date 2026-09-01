@@ -1,0 +1,145 @@
+.upload-container {
+  padding: 32px 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.page-subtitle {
+  color: #666;
+  margin-bottom: 28px;
+}
+
+.upload-card {
+  padding: 24px;
+  border-radius: 12px;
+}
+
+.dropzone {
+  border: 2px dashed #aaa;
+  border-radius: 12px;
+  padding: 40px;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.dropzone.active {
+  border-color: #3f51b5;
+  background: rgba(63, 81, 181, 0.05);
+}
+
+.upload-icon {
+  font-size: 60px;
+  width: 60px;
+  height: 60px;
+  color: #3f51b5;
+  margin-bottom: 16px;
+}
+
+.hint {
+  color: #999;
+  font-size: 13px;
+  margin-top: 12px;
+}
+
+.selected-file {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f5f5f5;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-top: 16px;
+  color: #333;
+}
+
+.selected-file mat-icon {
+  color: #3f51b5;
+}
+
+.size {
+  color: #999;
+  font-size: 13px;
+}
+
+.error {
+  color: #f44336;
+  margin-top: 12px;
+}
+
+.actions {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.actions button {
+  min-width: 200px;
+  padding: 8px 24px;
+  font-size: 16px;
+}
+
+.processing {
+  margin-top: 20px;
+}
+
+.processing-title {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.stage-list {
+  margin: 16px 0;
+}
+
+.stage {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  color: #999;
+  font-size: 15px;
+}
+
+.stage.active {
+  color: #3f51b5;
+  font-weight: 500;
+}
+
+.stage.done {
+  color: #4caf50;
+}
+
+.stage-icon {
+  font-size: 22px;
+  width: 22px;
+  height: 22px;
+}
+
+.stage-icon.spinning {
+  color: #3f51b5;
+  animation: spin 1s linear infinite;
+}
+
+.stage-icon.pending {
+  color: #ccc;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.progress {
+  margin-top: 20px;
+}
+
+.progress-text {
+  text-align: center;
+  color: #666;
+  margin-top: 8px;
+}

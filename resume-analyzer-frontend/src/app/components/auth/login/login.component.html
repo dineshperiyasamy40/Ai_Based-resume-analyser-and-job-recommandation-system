@@ -1,0 +1,33 @@
+<div class="auth-container">
+  <mat-card class="auth-card">
+    <mat-card-header>
+      <mat-card-title class="title">Welcome Back</mat-card-title>
+      <mat-card-subtitle>Sign in to analyze resumes &amp; find jobs</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" [(ngModel)]="email" name="email" placeholder="you@example.com" required />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Password</mat-label>
+          <input matInput type="password" [(ngModel)]="password" name="password" placeholder="••••••••" required />
+        </mat-form-field>
+
+        <div *ngIf="error" class="error">{{ error }}</div>
+
+        <button mat-raised-button color="primary" type="submit" class="full-width" [disabled]="loading">
+          <mat-spinner *ngIf="loading" diameter="20" class="spinner"></mat-spinner>
+          <span *ngIf="!loading">Sign In</span>
+        </button>
+      </form>
+    </mat-card-content>
+
+    <mat-card-actions class="center">
+      <span>Don't have an account? <a routerLink="/signup">Sign Up</a></span>
+    </mat-card-actions>
+  </mat-card>
+</div>

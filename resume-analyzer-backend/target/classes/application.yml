@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: resume-analyzer-backend
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://localhost:27017/resume-analyzer}
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+server:
+  port: 8080
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:resumeAnalyzerSuperSecretKeyForJwtTokenSigning2026ChangeMeInProduction}
+    expiration-ms: 86400000
+  ollama:
+    base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+    model: ${OLLAMA_MODEL:llama3.2}
+    timeout: 30000
+    retry-attempts: 2
+  jsearch:
+    api-key: ${JSEARCH_API_KEY:5afc5b23a8msh747b9ad22730924p1b9f9fjsnec22110442b6}
+    host: jsearch.p.rapidapi.com
+    base-url: https://jsearch.p.rapidapi.com
+
+logging:
+  level:
+    org.springframework.security: INFO
+    org.apache.tika: WARN

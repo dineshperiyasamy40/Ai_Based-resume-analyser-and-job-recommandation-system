@@ -1,0 +1,114 @@
+<div class="analysis-container" *ngIf="!loading; else loadingTemplate">
+  <div class="page-header">
+    <h1 class="page-title">Resume Analysis</h1>
+    <div class="file-info" *ngIf="resume">
+      <mat-icon>description</mat-icon>
+      <span>{{ resume.fileName }}</span>
+    </div>
+    <div class="nav-buttons">
+      <button mat-raised-button routerLink="/dashboard">
+        <mat-icon>arrow_back</mat-icon> Back to Dashboard
+      </button>
+      <button mat-raised-button color="primary" [routerLink]="['/skills', resumeId]">
+        Skill Gap Analysis
+      </button>
+      <button mat-raised-button color="accent" [routerLink]="['/jobs', resumeId]">
+        Job Recommendations
+      </button>
+    </div>
+  </div>
+
+  <div class="score-grid" *ngIf="analysis">
+    <app-score-card title="Resume Quality" [score]="analysis.resumeScore" icon="rate_review"></app-score-card>
+    <app-score-card title="ATS Compatibility" [score]="analysis.atsScore" icon="fact_check"></app-score-card>
+    <app-score-card title="Keyword Score" [score]="analysis.keywordScore" icon="search"></app-score-card>
+    <app-score-card title="Skill Match" [score]="overallSkillMatch" icon="handshake"></app-score-card>
+  </div>
+
+  <mat-card class="detail-card" *ngIf="analysis">
+    <mat-card-header>
+      <mat-card-title>Summary</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <p class="summary">{{ analysis.summary }}</p>
+      <div class="feedback">
+        <h4>Improvement Suggestions</h4>
+        <p>{{ analysis.resumeFeedback }}</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="two-col" *ngIf="analysis">
+    <mat-card class="detail-card">
+      <mat-card-header>
+        <mat-card-title>Skills</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="skill-list">
+          <div class="skill-chip" *ngFor="let skill of analysis.skills">
+            <span class="skill-name">{{ skill.name }}</span>
+            <span class="skill-level" [class.beginner]="skill.level === 'beginner'" [class.intermediate]="skill.level === 'intermediate'" [class.advanced]="skill.level === 'advanced'" [class.expert]="skill.level === 'expert'">{{ skill.level }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="detail-card">
+      <mat-card-header>
+        <mat-card-title>Keywords</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <h4 class="section-label">Found Keywords</h4>
+        <div class="chip-row">
+          <mat-chip *ngFor="let kw of analysis.foundKeywords" class="found-chip">{{ kw }}</mat-chip>
+        </div>
+        <h4 class="section-label missing-title">Missing Keywords</h4>
+        <div class="chip-row">
+          <mat-chip *ngFor="let kw of analysis.missingKeywords" class="missing-chip">{{ kw }}</mat-chip>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <mat-card class="detail-card" *ngIf="analysis">
+    <mat-card-header>
+      <mat-card-title>ATS Details</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="two-inner-col">
+        <div>
+          <h4 class="section-label">Issues</h4>
+          <ul class="issue-list">
+            <li *ngFor="let issue of analysis.atsIssues">{{ issue }}</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="section-label">Suggestions</h4>
+          <ul class="suggestion-list">
+            <li *ngFor="let sug of analysis.atsSuggestions">{{ sug }}</li>
+          </ul>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="detail-card" *ngIf="analysis">
+    <mat-card-header>
+      <mat-card-title>Experience</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="exp-item" *ngFor="let exp of analysis.experience">
+        <h4>{{ exp.role }}</h4>
+        <div class="exp-meta">{{ exp.company }} · {{ exp.duration }}</div>
+        <p>{{ exp.responsibilities }}</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<ng-template #loadingTemplate>
+  <div class="loading">
+    <mat-spinner></mat-spinner>
+    <p>Loading analysis...</p>
+  </div>
+</ng-template>

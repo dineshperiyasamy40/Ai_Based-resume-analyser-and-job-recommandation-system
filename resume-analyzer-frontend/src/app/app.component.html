@@ -1,0 +1,19 @@
+<mat-toolbar color="primary" class="navbar">
+  <button mat-button class="brand" routerLink="/dashboard">
+    <mat-icon>analytics</mat-icon>
+    <span class="brand-text">Resume Analyzer</span>
+  </button>
+  <span class="spacer"></span>
+  <ng-container *ngIf="auth.isLoggedIn$ | async">
+    <button mat-button routerLink="/dashboard"><mat-icon>dashboard</mat-icon> Dashboard</button>
+    <button mat-button routerLink="/upload"><mat-icon>upload_file</mat-icon> Upload</button>
+    <span class="user-chip">{{ auth.userName }}</span>
+    <button mat-button (click)="logout()"><mat-icon>logout</mat-icon> Logout</button>
+  </ng-container>
+  <ng-container *ngIf="!(auth.isLoggedIn$ | async)">
+    <button mat-button routerLink="/login">Login</button>
+    <button mat-raised-button color="accent" routerLink="/signup">Sign Up</button>
+  </ng-container>
+</mat-toolbar>
+
+<router-outlet></router-outlet>

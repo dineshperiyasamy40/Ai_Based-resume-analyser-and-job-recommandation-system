@@ -17,6 +17,9 @@
 
 .quick-actions {
   margin-bottom: 24px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .action-btn {
@@ -58,6 +61,11 @@
 
 .resume-info {
   flex: 1;
+}
+
+.card-actions {
+  display: flex;
+  gap: 4px;
 }
 
 .resume-name {

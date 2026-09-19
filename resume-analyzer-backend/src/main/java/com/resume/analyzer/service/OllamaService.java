@@ -4,12 +4,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.resume.analyzer.model.AnswerFeedback;
 import com.resume.analyzer.model.Education;
 import com.resume.analyzer.model.Experience;
+import com.resume.analyzer.model.InterviewQuestion;
 import com.resume.analyzer.model.JobRecommendation;
 import com.resume.analyzer.model.LearningStep;
 import com.resume.analyzer.model.RecommendedRole;
 import com.resume.analyzer.model.ResumeAnalysis;
+import com.resume.analyzer.model.ResumeImprovement;
 import com.resume.analyzer.model.Skill;
 import com.resume.analyzer.model.SkillGapAnalysis;
 import org.springframework.beans.factory.annotation.Value;
@@ -268,6 +271,224 @@ public class OllamaService {
         }
     }
 
+    /**
+     * Generates an ATS-optimized, improved version of a resume using Ollama.
+     */
+    public ResumeImprovement improveResume(String resumeText, ResumeAnalysis analysis) {
+        if (resumeText == null || resumeText.isBlank()) {
+            throw new IllegalArgumentException("Resume improvement unavailable: resume text is empty.");
+        }
+
+        try {
+            ObjectNode body = objectMapper.createObjectNode();
+            body.put("model", model);
+            body.put("stream", false);
+            body.put("format", "json");
+
+            ArrayNode messages = body.putArray("messages");
+            ObjectNode systemMessage = messages.addObject();
+            systemMessage.put("role", "system");
+            systemMessage.put("content", IMPROVE_RESUME_SYSTEM_PROMPT);
+
+            ObjectNode userMessage = messages.addObject();
+            userMessage.put("role", "user");
+            String prompt = String.format(
+                    "Original resume text:\n\n%s\n\nCurrent analysis:\n" +
+                    "- Missing keywords: %s\n" +
+                    "- ATS issues: %s\n" +
+                    "- ATS suggestions: %s\n\n" +
+                    "Rewrite this resume following the instructions.",
+                    resumeText,
+                    String.join(", ", analysis.getMissingKeywords()),
+                    String.join(", ", analysis.getAtsIssues()),
+                    String.join(", ", analysis.getAtsSuggestions())
+            );
+            userMessage.put("content", prompt);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            ResponseEntity<String> response = restTemplate.postForEntity(
+                    normalizedBaseUrl() + "/api/chat",
+                    new HttpEntity<>(objectMapper.writeValueAsString(body), headers),
+                    String.class);
+
+            if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
+                throw new IllegalArgumentException(
+                        "Ollama returned HTTP " + response.getStatusCode().value() + ".");
+            }
+
+            JsonNode root = objectMapper.readTree(response.getBody());
+            String content = root.path("message").path("content").asText("");
+            if (content.isBlank()) {
+                throw new IllegalArgumentException("Ollama returned an empty improvement.");
+            }
+            return parseImprovement(content);
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
+                    "Resume improvement unavailable: " + e.getMessage(), e);
+        }
+    }
+
+    private ResumeImprovement parseImprovement(String contentJson) throws Exception {
+        JsonNode node = objectMapper.readTree(contentJson);
+        return ResumeImprovement.builder()
+                .improvedResume(node.path("improvedResume").asText(""))
+                .keywordInsertions(stringsAt(node.path("keywordInsertions")))
+                .actionVerbs(stringsAt(node.path("actionVerbs")))
+                .atsFormattingTips(stringsAt(node.path("atsFormattingTips")))
+                .rationale(node.path("rationale").asText(""))
+                .build();
+    }
+
+    /**
+     * Generates mock interview questions tailored to the candidate's profile using Ollama.
+     */
+    public List<InterviewQuestion> generateInterviewQuestions(ResumeAnalysis analysis, String targetRole,
+                                                              String difficulty, int count) {
+        if (analysis == null) {
+            throw new IllegalArgumentException("Cannot generate interview questions: invalid resume analysis");
+        }
+
+        try {
+            ObjectNode body = objectMapper.createObjectNode();
+            body.put("model", model);
+            body.put("stream", false);
+            body.put("format", "json");
+
+            ArrayNode messages = body.putArray("messages");
+            ObjectNode systemMessage = messages.addObject();
+            systemMessage.put("role", "system");
+            systemMessage.put("content", INTERVIEW_QUESTIONS_SYSTEM_PROMPT);
+
+            ObjectNode userMessage = messages.addObject();
+            userMessage.put("role", "user");
+            String prompt = String.format(
+                    "Target Role: %s\nDifficulty: %s\nNumber of Questions: %d\n\nSkills: %s\nExperience: %s\nEducation: %s",
+                    targetRole,
+                    difficulty,
+                    count,
+                    String.join(", ", extractResumeSkills(analysis)),
+                    formatExperience(analysis.getExperience()),
+                    formatEducation(analysis.getEducation())
+            );
+            userMessage.put("content", prompt);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            ResponseEntity<String> response = restTemplate.postForEntity(
+                    normalizedBaseUrl() + "/api/chat",
+                    new HttpEntity<>(objectMapper.writeValueAsString(body), headers),
+                    String.class);
+
+            if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
+                throw new IllegalArgumentException("Ollama interview questions generation failed");
+            }
+
+            JsonNode root = objectMapper.readTree(response.getBody());
+            String content = root.path("message").path("content").asText("");
+            return parseInterviewQuestions(content);
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
+                    "Interview questions generation unavailable: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Evaluates a candidate's answer to an interview question using Ollama.
+     */
+    public AnswerFeedback evaluateAnswer(InterviewQuestion question, String userAnswer) {
+        if (question == null || userAnswer == null || userAnswer.isBlank()) {
+            throw new IllegalArgumentException("Cannot evaluate answer: question or answer is empty");
+        }
+
+        try {
+            ObjectNode body = objectMapper.createObjectNode();
+            body.put("model", model);
+            body.put("stream", false);
+            body.put("format", "json");
+
+            ArrayNode messages = body.putArray("messages");
+            ObjectNode systemMessage = messages.addObject();
+            systemMessage.put("role", "system");
+            systemMessage.put("content", ANSWER_FEEDBACK_SYSTEM_PROMPT);
+
+            ObjectNode userMessage = messages.addObject();
+            userMessage.put("role", "user");
+            String prompt = String.format(
+                    "Question: %s\nCategory: %s\nDifficulty: %s\nModel answer (for reference): %s\n\nCandidate's answer:\n%s",
+                    question.getQuestion(),
+                    question.getCategory(),
+                    question.getDifficulty(),
+                    question.getModelAnswer(),
+                    userAnswer
+            );
+            userMessage.put("content", prompt);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            ResponseEntity<String> response = restTemplate.postForEntity(
+                    normalizedBaseUrl() + "/api/chat",
+                    new HttpEntity<>(objectMapper.writeValueAsString(body), headers),
+                    String.class);
+
+            if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
+                throw new IllegalArgumentException("Ollama answer evaluation failed");
+            }
+
+            JsonNode root = objectMapper.readTree(response.getBody());
+            String content = root.path("message").path("content").asText("");
+            return parseAnswerFeedback(content);
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
+                    "Answer evaluation unavailable: " + e.getMessage(), e);
+        }
+    }
+
+    private List<InterviewQuestion> parseInterviewQuestions(String contentJson) throws Exception {
+        JsonNode node = objectMapper.readTree(contentJson);
+        JsonNode questionsNode = node.isArray() ? node : node.path("questions");
+        List<InterviewQuestion> questions = new ArrayList<>();
+        for (JsonNode q : questionsNode) {
+            questions.add(InterviewQuestion.builder()
+                    .question(q.path("question").asText())
+                    .category(q.path("category").asText("behavioral"))
+                    .difficulty(q.path("difficulty").asText("medium"))
+                    .tips(q.path("tips").asText(""))
+                    .modelAnswer(q.path("modelAnswer").asText(""))
+                    .build());
+        }
+        return questions;
+    }
+
+    private AnswerFeedback parseAnswerFeedback(String contentJson) throws Exception {
+        JsonNode node = objectMapper.readTree(contentJson);
+        return AnswerFeedback.builder()
+                .score(clamp(node.path("score").asInt(0)))
+                .strengths(stringsAt(node.path("strengths")))
+                .improvements(stringsAt(node.path("improvements")))
+                .suggestedAnswer(node.path("suggestedAnswer").asText(""))
+                .build();
+    }
+
+    private String formatExperience(List<Experience> experience) {
+        if (experience == null || experience.isEmpty()) {
+            return "Not specified";
+        }
+        List<String> roles = new ArrayList<>();
+        for (Experience e : experience) {
+            if (e.getRole() != null && e.getCompany() != null) {
+                roles.add(e.getRole() + " at " + e.getCompany() + " (" + e.getDuration() + ")");
+            }
+        }
+        return roles.isEmpty() ? "Not specified" : String.join(", ", roles);
+    }
+
     private SkillGapAnalysis parseSkillGapAnalysis(String contentJson, ResumeAnalysis analysis, List<JobRecommendation> matchedJobs) throws Exception {
         JsonNode node = objectMapper.readTree(contentJson);
         
@@ -426,6 +647,64 @@ public class OllamaService {
             - careerJustification: 1-2 sentences explaining why this role fits
             - Return 3-5 diverse role recommendations
             - Do not add markdown or text outside the JSON array.
+            """;
+
+    private static final String IMPROVE_RESUME_SYSTEM_PROMPT = """
+            You are an expert ATS optimization specialist and professional resume writer.
+            Rewrite the provided resume to maximize its Applicant Tracking System (ATS) compatibility and impact.
+            Return ONLY a valid JSON object with this exact schema:
+            {
+              "improvedResume": "string",
+              "keywordInsertions": ["string"],
+              "actionVerbs": ["string"],
+              "atsFormattingTips": ["string"],
+              "rationale": "string"
+            }
+            - improvedResume: The complete rewritten resume as plain text. Use standard headings (Summary, Skills, Experience, Education). Use strong action verbs, quantify achievements with numbers and %, weave in the missing keywords naturally, and keep it clean and parseable by ATS (no tables, columns, or graphics).
+            - keywordInsertions: Up to 8 entries describing which missing keyword to add and where, e.g. "Add 'AWS' to the Skills section and to the first experience bullet".
+            - actionVerbs: 5-10 recommended action verbs used in the rewrite.
+            - atsFormattingTips: 3-6 general ATS-safe formatting recommendations.
+            - rationale: 2-3 sentences summarizing the most important changes made and why.
+            Preserve the person's real information - never invent employers, roles, degrees, or credentials that were not in the original resume. Do not add markdown or text outside the JSON object.
+            """;
+
+    private static final String INTERVIEW_QUESTIONS_SYSTEM_PROMPT = """
+            You are an expert technical interviewer and career coach.
+            Generate realistic mock interview questions tailored to the candidate's target role, skills, and background.
+            Return ONLY a valid JSON object with this exact schema:
+            {
+              "questions": [
+                {
+                  "question": "string",
+                  "category": "technical|behavioral|situational",
+                  "difficulty": "easy|medium|hard",
+                  "tips": "string",
+                  "modelAnswer": "string"
+                }
+              ]
+            }
+            - question: A realistic interview question a hiring manager would ask for the target role.
+            - category: Mix of technical (skills-based), behavioral (past experience), and situational (hypothetical) questions.
+            - difficulty: Must match the requested difficulty level for the bulk, with a reasonable spread.
+            - tips: What the interviewer is looking for in a strong answer (2-3 sentences).
+            - modelAnswer: A strong sample answer tailored to the candidate's skills (2-4 sentences, can reference their resume).
+            - Generate exactly the requested number of questions. Do not add markdown or text outside the JSON object.
+            """;
+
+    private static final String ANSWER_FEEDBACK_SYSTEM_PROMPT = """
+            You are an expert interview coach evaluating a candidate's answer.
+            Return ONLY a valid JSON object with this exact schema:
+            {
+              "score": 0,
+              "strengths": ["string"],
+              "improvements": ["string"],
+              "suggestedAnswer": "string"
+            }
+            - score: Overall answer quality from 0 to 100.
+            - strengths: 2-4 specific things the candidate did well.
+            - improvements: 2-4 specific, actionable ways to improve the answer.
+            - suggestedAnswer: A concise model answer (2-4 sentences) the candidate should study.
+            - Be constructive, encouraging, and specific. Do not add markdown or text outside the JSON object.
             """;
 
     private int clamp(int score) {

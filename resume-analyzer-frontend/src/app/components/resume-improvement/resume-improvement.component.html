@@ -1,0 +1,116 @@
+<div class="improvement-container" *ngIf="!loading; else loadingTemplate">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">AI Resume Improvement & ATS Optimization</h1>
+      <div class="file-info" *ngIf="resume">
+        <mat-icon>description</mat-icon>
+        <span>{{ resume.fileName }}</span>
+      </div>
+    </div>
+    <div class="nav-buttons">
+      <button mat-raised-button routerLink="/dashboard">
+        <mat-icon>arrow_back</mat-icon> Dashboard
+      </button>
+      <button mat-raised-button [routerLink]="['/analysis', resumeId]">
+        <mat-icon>analytics</mat-icon> Back to Analysis
+      </button>
+      <button mat-raised-button color="primary" [routerLink]="['/interview/setup']">
+        <mat-icon>record_voice_over</mat-icon> AI Interview Prep
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <ng-container *ngIf="improvement">
+    <div class="action-bar" *ngIf="improvement.improvedResume">
+      <span class="action-hint">Powered by AI — copy or download your optimized resume</span>
+      <button mat-raised-button color="primary" (click)="copyImproved()">
+        <mat-icon>content_copy</mat-icon> Copy
+      </button>
+      <button mat-raised-button color="accent" (click)="downloadImproved()">
+        <mat-icon>download</mat-icon> Download .txt
+      </button>
+    </div>
+
+    <mat-card class="detail-card rationale-card" *ngIf="improvement.rationale">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon color="primary">auto_awesome</mat-icon> Improvement Summary
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>{{ improvement.rationale }}</p>
+      </mat-card-content>
+    </mat-card>
+
+    <div class="two-col" *ngIf="resume && improvement.improvedResume">
+      <mat-card class="detail-card compare-card">
+        <mat-card-header>
+          <mat-card-title><mat-icon>note_alt</mat-icon> Original Resume</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <pre class="resume-text original">{{ resume.content }}</pre>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="detail-card compare-card improved">
+        <mat-card-header>
+          <mat-card-title><mat-icon color="primary">upgrade</mat-icon> Improved (ATS-Optimized)</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <pre class="resume-text improved">{{ improvement.improvedResume }}</pre>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="three-col" *ngIf="improvement">
+      <mat-card class="detail-card tip-card" *ngIf="improvement.keywordInsertions.length > 0">
+        <mat-card-header>
+          <mat-card-title><mat-icon color="warn">search</mat-icon> Keyword Insertions</mat-card-title>
+          <mat-card-subtitle>Where to weave in missing keywords</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <ul class="check-list">
+            <li *ngFor="let item of improvement.keywordInsertions">
+              <mat-icon>add_circle</mat-icon>{{ item }}
+            </li>
+          </ul>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="detail-card tip-card" *ngIf="improvement.actionVerbs.length > 0">
+        <mat-card-header>
+          <mat-card-title><mat-icon color="primary">flash_on</mat-icon> Action Verbs</mat-card-title>
+          <mat-card-subtitle>Strong verbs used in the rewrite</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="chip-row">
+            <mat-chip *ngFor="let verb of improvement.actionVerbs" class="verb-chip">{{ verb }}</mat-chip>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="detail-card tip-card" *ngIf="improvement.atsFormattingTips.length > 0">
+        <mat-card-header>
+          <mat-card-title><mat-icon>fact_check</mat-icon> ATS Formatting Tips</mat-card-title>
+          <mat-card-subtitle>Keep these in mind when finalizing</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <ul class="check-list">
+            <li *ngFor="let tip of improvement.atsFormattingTips">
+              <mat-icon>check_circle</mat-icon>{{ tip }}
+            </li>
+          </ul>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </ng-container>
+</div>
+
+<ng-template #loadingTemplate>
+  <div class="loading">
+    <mat-spinner></mat-spinner>
+    <p>Optimizing your resume with AI...</p>
+  </div>
+</ng-template>

@@ -9,13 +9,14 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
+import java.util.List;
 
-@Document(collection = "resumes")
+@Document(collection = "interview_sessions")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Resume {
+public class InterviewSession {
 
     @Id
     private String id;
@@ -23,17 +24,23 @@ public class Resume {
     @Indexed
     private String userId;
 
-    private String fileName;
+    private String resumeId;
 
-    private String fileType;
+    private String resumeFileName;
 
-    private long fileSize;
+    private String targetRole;
 
-    private String content;
+    private String difficulty;
 
-    private ResumeAnalysis analysis;
+    private List<InterviewQuestion> questions;
 
-    private ResumeImprovement improvement;
+    private List<AnswerResult> answerResults;
+
+    private boolean completed;
+
+    private int overallScore;
+
+    private String summaryFeedback;
 
     private Instant createdAt = Instant.now();
 }

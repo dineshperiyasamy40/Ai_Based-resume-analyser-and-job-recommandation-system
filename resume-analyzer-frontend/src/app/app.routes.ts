@@ -35,5 +35,25 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     loadComponent: () => import('./components/job-recommendations/job-recommendations.component').then(m => m.JobRecommendationsComponent)
   },
+  {
+    path: 'improvement/:id',
+    canActivate: [AuthGuard],
+    loadComponent: () => import('./components/resume-improvement/resume-improvement.component').then(m => m.ResumeImprovementComponent)
+  },
+  {
+    path: 'interview/setup',
+    canActivate: [AuthGuard],
+    loadComponent: () => import('./components/interview-setup/interview-setup.component').then(m => m.InterviewSetupComponent)
+  },
+  {
+    path: 'interview/:id/practice',
+    canActivate: [AuthGuard],
+    loadComponent: () => import('./components/interview-practice/interview-practice.component').then(m => m.InterviewPracticeComponent)
+  },
+  {
+    path: 'interview/:id/review',
+    canActivate: [AuthGuard],
+    loadComponent: () => import('./components/interview-review/interview-review.component').then(m => m.InterviewReviewComponent)
+  },
   { path: '**', redirectTo: 'dashboard' }
 ];

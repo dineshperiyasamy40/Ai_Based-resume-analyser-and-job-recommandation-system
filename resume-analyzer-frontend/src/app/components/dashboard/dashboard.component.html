@@ -9,6 +9,10 @@
       <mat-icon>upload_file</mat-icon>
       Upload New Resume
     </button>
+    <button mat-raised-button color="accent" [routerLink]="['/interview/setup']" class="action-btn">
+      <mat-icon>record_voice_over</mat-icon>
+      AI Interview Prep
+    </button>
   </div>
 
   <div *ngIf="loading" class="loading">
@@ -30,6 +34,14 @@
             <span class="mini-score" [class.good]="resume.analysis.keywordScore >= 70">Keywords: {{ resume.analysis.keywordScore }}</span>
           </div>
           <div class="date" *ngIf="resume.createdAt">Uploaded: {{ resume.createdAt | date: 'medium' }}</div>
+        </div>
+        <div class="card-actions" (click)="$event.stopPropagation()">
+          <button mat-icon-button color="primary" [title]="'Improve Resume'" [routerLink]="['/improvement', resume.id]">
+            <mat-icon>upgrade</mat-icon>
+          </button>
+          <button mat-icon-button color="accent" [title]="'AI Interview Prep'" [routerLink]="['/interview/setup']">
+            <mat-icon>record_voice_over</mat-icon>
+          </button>
         </div>
         <mat-icon class="chevron">chevron_right</mat-icon>
       </div>

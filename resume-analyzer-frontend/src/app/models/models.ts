@@ -102,3 +102,54 @@ export interface RecommendedRole {
   niceToHaveSkills: string[];
   careerJustification: string;
 }
+
+export interface ResumeImprovement {
+  improvedResume: string;
+  keywordInsertions: string[];
+  actionVerbs: string[];
+  atsFormattingTips: string[];
+  rationale: string;
+}
+
+export interface InterviewQuestion {
+  question: string;
+  category: string;
+  difficulty: string;
+  tips: string;
+  modelAnswer: string;
+}
+
+export interface AnswerFeedback {
+  score: number;
+  strengths: string[];
+  improvements: string[];
+  suggestedAnswer: string;
+}
+
+export interface AnswerResult {
+  question: InterviewQuestion;
+  userAnswer: string;
+  feedback: AnswerFeedback;
+}
+
+export interface InterviewSession {
+  id: string;
+  userId: string;
+  resumeId: string;
+  resumeFileName: string;
+  targetRole: string;
+  difficulty: string;
+  questions: InterviewQuestion[];
+  answerResults: AnswerResult[];
+  completed: boolean;
+  overallScore: number;
+  summaryFeedback?: string;
+  createdAt?: string;
+}
+
+export interface InterviewSetupPayload {
+  resumeId: string;
+  targetRole: string;
+  difficulty: string;
+  questionCount: number;
+}

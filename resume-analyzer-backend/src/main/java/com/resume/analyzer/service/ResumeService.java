@@ -3,6 +3,7 @@ package com.resume.analyzer.service;
 import com.resume.analyzer.model.JobRecommendation;
 import com.resume.analyzer.model.Resume;
 import com.resume.analyzer.model.ResumeAnalysis;
+import com.resume.analyzer.model.ResumeImprovement;
 import com.resume.analyzer.model.SkillGapAnalysis;
 import com.resume.analyzer.model.SkillGapResult;
 import com.resume.analyzer.repository.ResumeRepository;
@@ -105,5 +106,19 @@ public class ResumeService {
 
     public List<Resume> getUserResumes(String userId) {
         return resumeRepository.findByUserId(userId);
+    }
+
+    public ResumeImprovement getResumeImprovement(String userId, String resumeId) {
+        Resume resume = getResume(userId, resumeId);
+        if (resume.getAnalysis() == null) {
+            throw new IllegalArgumentException(
+                    "Resume improvement unavailable: resume has not been analyzed yet.");
+        }
+        if (resume.getImprovement() == null) {
+            ResumeImprovement improvement = ollamaService.improveResume(resume.getContent(), resume.getAnalysis());
+            resume.setImprovement(improvement);
+            resumeRepository.save(resume);
+        }
+        return resume.getImprovement();
     }
 }

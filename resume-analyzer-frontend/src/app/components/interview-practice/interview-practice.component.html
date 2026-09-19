@@ -1,0 +1,112 @@
+<div class="practice-container" *ngIf="!loading; else loadingTemplate">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Mock Interview</h1>
+      <p class="subtitle" *ngIf="session">
+        {{ session.targetRole || 'General' }} · {{ session.difficulty }} difficulty · {{ session.resumeFileName }}
+      </p>
+    </div>
+    <div class="nav-buttons">
+      <button mat-raised-button routerLink="/dashboard">
+        <mat-icon>arrow_back</mat-icon> Dashboard
+      </button>
+      <button mat-raised-button [routerLink]="['/interview/setup']">
+        <mat-icon>replay</mat-icon> New Interview
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <ng-container *ngIf="question">
+    <mat-card class="question-card">
+      <mat-card-header>
+        <mat-card-title>Question {{ progressLabel }}</mat-card-title>
+        <mat-card-subtitle>
+          <mat-chip class="cat-chip">
+            <mat-icon>{{ getCategoryIcon(question.category) }}</mat-icon> {{ question.category }}
+          </mat-chip>
+          <mat-chip class="diff-chip">{{ question.difficulty }}</mat-chip>
+        </mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <h3 class="question-text">{{ question.question }}</h3>
+        <div class="tip" *ngIf="question.tips">
+          <mat-icon>lightbulb</mat-icon>
+          <div>
+            <strong>What the interviewer looks for:</strong>
+            <p>{{ question.tips }}</p>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="answer-card">
+      <mat-card-header>
+        <mat-card-title>Your Answer</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <mat-form-field appearance="outline" class="full-width">
+          <textarea matInput rows="6" placeholder="Type your answer here..." [(ngModel)]="answer"></textarea>
+        </mat-form-field>
+        <button mat-raised-button color="primary" class="submit-btn"
+                [disabled]="submitting || !answer.trim()" (click)="submitAnswer()">
+          <mat-icon *ngIf="!submitting">check_circle</mat-icon>
+          <mat-spinner *ngIf="submitting" diameter="20"></mat-spinner>
+          {{ submitting ? 'Evaluating...' : 'Submit Answer for Feedback' }}
+        </button>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="feedback-card" *ngIf="feedback">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon color="primary">insights</mat-icon> AI Feedback
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="feedback-score">
+          <span class="score-num" [class.good]="feedback.score >= 70" [class.medium]="feedback.score >= 40 && feedback.score < 70" [class.low]="feedback.score < 40">{{ feedback.score }}</span>
+          <span class="score-label">/ 100</span>
+        </div>
+
+        <div class="feedback-grid">
+          <div class="fb-col" *ngIf="feedback.strengths.length > 0">
+            <h4><mat-icon class="good-icon">thumb_up</mat-icon> Strengths</h4>
+            <ul>
+              <li *ngFor="let item of feedback.strengths">{{ item }}</li>
+            </ul>
+          </div>
+          <div class="fb-col" *ngIf="feedback.improvements.length > 0">
+            <h4><mat-icon class="improve-icon">trending_up</mat-icon> Ways to Improve</h4>
+            <ul>
+              <li *ngFor="let item of feedback.improvements">{{ item }}</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="suggested" *ngIf="feedback.suggestedAnswer">
+          <h4><mat-icon>menu_book</mat-icon> Suggested Answer</h4>
+          <p>{{ feedback.suggestedAnswer }}</p>
+        </div>
+
+        <button mat-raised-button color="accent" class="next-btn" (click)="nextQuestion()">
+          <mat-icon>{{ currentIndex + 1 >= totalQuestions ? 'summarize' : 'arrow_forward' }}</mat-icon>
+          {{ currentIndex + 1 >= totalQuestions ? 'View Results' : 'Next Question' }}
+        </button>
+      </mat-card-content>
+    </mat-card>
+  </ng-container>
+
+  <div class="empty" *ngIf="!question">
+    <mat-icon>record_voice_over</mat-icon>
+    <p>No questions available for this interview.</p>
+  </div>
+</div>
+
+<ng-template #loadingTemplate>
+  <div class="loading">
+    <mat-spinner></mat-spinner>
+    <p>Loading interview...</p>
+  </div>
+</ng-template>

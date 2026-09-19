@@ -3,9 +3,13 @@ import { HttpClient, HttpEventType, HttpRequest, HttpResponse } from '@angular/c
 import { Observable, map } from 'rxjs';
 import {
   AuthResponse,
+  AnswerFeedback,
+  InterviewSession,
+  InterviewSetupPayload,
   JobRecommendation,
   Resume,
   ResumeAnalysis,
+  ResumeImprovement,
   SkillGapAnalysis,
   SkillGapResult
 } from '../models/models';
@@ -61,5 +65,25 @@ export class ResumeApiService {
 
   getJobs(id: string): Observable<JobRecommendation[]> {
     return this.http.get<JobRecommendation[]>(`${this.baseUrl}/resume/${id}/jobs`);
+  }
+
+  getImprovement(id: string): Observable<ResumeImprovement> {
+    return this.http.get<ResumeImprovement>(`${this.baseUrl}/resume/${id}/improvement`);
+  }
+
+  generateInterview(payload: InterviewSetupPayload): Observable<InterviewSession> {
+    return this.http.post<InterviewSession>(`${this.baseUrl}/interview/generate`, payload);
+  }
+
+  submitInterviewAnswer(sessionId: string, questionIndex: number, answer: string): Observable<AnswerFeedback> {
+    return this.http.post<AnswerFeedback>(`${this.baseUrl}/interview/${sessionId}/answer`, { questionIndex, answer });
+  }
+
+  getInterviewSession(sessionId: string): Observable<InterviewSession> {
+    return this.http.get<InterviewSession>(`${this.baseUrl}/interview/${sessionId}`);
+  }
+
+  listInterviewSessions(): Observable<InterviewSession[]> {
+    return this.http.get<InterviewSession[]>(`${this.baseUrl}/interview/list`);
   }
 }

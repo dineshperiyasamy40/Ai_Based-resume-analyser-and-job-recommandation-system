@@ -1,0 +1,71 @@
+<div class="setup-container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">AI Interview Preparation</h1>
+      <p class="subtitle">Generate a mock interview tailored to your resume and get AI feedback on every answer.</p>
+    </div>
+    <div class="nav-buttons">
+      <button mat-raised-button routerLink="/dashboard">
+        <mat-icon>arrow_back</mat-icon> Dashboard
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <mat-card class="setup-card">
+    <mat-card-content class="setup-content">
+      <div *ngIf="loadingResumes" class="loading-inline">
+        <mat-spinner diameter="32"></mat-spinner>
+        <span>Loading your resumes...</span>
+      </div>
+
+      <ng-container *ngIf="!loadingResumes">
+        <div class="empty" *ngIf="resumes.length === 0">
+          <mat-icon>description</mat-icon>
+          <p>You need to upload a resume first before practicing interviews.</p>
+          <button mat-raised-button color="primary" routerLink="/upload">Upload a Resume</button>
+        </div>
+
+        <div class="form-fields" *ngIf="resumes.length > 0">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Select Resume</mat-label>
+            <mat-select [(ngModel)]="selectedResumeId">
+              <mat-option *ngFor="let resume of resumes" [value]="resume.id">
+                {{ resume.fileName }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Target Role (optional)</mat-label>
+            <input matInput [(ngModel)]="targetRole" placeholder="e.g. Java Backend Developer">
+            <mat-hint>Leave blank for general questions based on your profile</mat-hint>
+          </mat-form-field>
+
+          <div class="section">
+            <label class="section-label">Difficulty</label>
+            <mat-radio-group [(ngModel)]="difficulty" class="radio-row">
+              <mat-radio-button value="easy">Easy</mat-radio-button>
+              <mat-radio-button value="medium" color="warn">Medium</mat-radio-button>
+              <mat-radio-button value="hard" color="accent">Hard</mat-radio-button>
+            </mat-radio-group>
+          </div>
+
+          <div class="section">
+            <label class="section-label">Number of Questions</label>
+            <mat-radio-group [(ngModel)]="questionCount" class="radio-row">
+              <mat-radio-button *ngFor="let count of counts" [value]="count" color="primary">{{ count }}</mat-radio-button>
+            </mat-radio-group>
+          </div>
+
+          <button mat-raised-button color="primary" class="start-btn" [disabled]="generating" (click)="startInterview()">
+            <mat-icon *ngIf="!generating">record_voice_over</mat-icon>
+            <mat-spinner *ngIf="generating" diameter="20"></mat-spinner>
+            {{ generating ? 'Generating questions...' : 'Start Interview' }}
+          </button>
+        </div>
+      </ng-container>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,0 +1,102 @@
+<div class="review-container" *ngIf="!loading; else loadingTemplate">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Interview Results</h1>
+      <p class="subtitle" *ngIf="session">
+        {{ session.targetRole || 'General' }} · {{ session.difficulty }} difficulty · {{ session.resumeFileName }}
+      </p>
+    </div>
+    <div class="nav-buttons">
+      <button mat-raised-button routerLink="/dashboard">
+        <mat-icon>arrow_back</mat-icon> Dashboard
+      </button>
+      <button mat-raised-button color="primary" [routerLink]="['/interview/setup']">
+        <mat-icon>record_voice_over</mat-icon> Practice Again
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <ng-container *ngIf="session">
+    <mat-card class="score-card">
+      <div class="score-content">
+        <div class="overall-score">
+          <span class="big-num" [ngClass]="scoreClass">{{ session.overallScore }}</span>
+          <span class="label">% Overall Score</span>
+        </div>
+        <div class="overall-text">
+          <h3>Interview Performance Summary</h3>
+          <p *ngIf="session.summaryFeedback">{{ session.summaryFeedback }}</p>
+          <p *ngIf="!session.summaryFeedback">You answered {{ answered.length }} of {{ session.questions.length }} questions.</p>
+        </div>
+      </div>
+    </mat-card>
+
+    <h2 class="section-title">Question Breakdown</h2>
+
+    <div class="qa-list" *ngIf="answered.length > 0">
+      <mat-card class="qa-card" *ngFor="let item of answered; let i = index">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-chip class="q-num">Q{{ i + 1 }}</mat-chip>
+            {{ item.question.question }}
+          </mat-card-title>
+          <mat-card-subtitle>
+            <mat-chip class="cat-chip">{{ item.question.category }}</mat-chip>
+            <mat-chip class="diff-chip">{{ item.question.difficulty }}</mat-chip>
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="feedback-score">
+            <span class="score-num" [ngClass]="{
+              'good': item.feedback.score >= 70,
+              'medium': item.feedback.score >= 40 && item.feedback.score < 70,
+              'low': item.feedback.score < 40
+            }">{{ item.feedback.score }}</span>
+            <span class="score-label">/ 100</span>
+          </div>
+
+          <div class="answer-block">
+            <h4><mat-icon class="user-icon">person</mat-icon> Your Answer</h4>
+            <p class="pre-wrap">{{ item.userAnswer }}</p>
+          </div>
+
+          <div class="strengths" *ngIf="item.feedback.strengths.length > 0">
+            <h4><mat-icon class="good-icon">thumb_up</mat-icon> Strengths</h4>
+            <ul>
+              <li *ngFor="let s of item.feedback.strengths">{{ s }}</li>
+            </ul>
+          </div>
+
+          <div class="improvements" *ngIf="item.feedback.improvements.length > 0">
+            <h4><mat-icon class="improve-icon">trending_up</mat-icon> Ways to Improve</h4>
+            <ul>
+              <li *ngFor="let imp of item.feedback.improvements">{{ imp }}</li>
+            </ul>
+          </div>
+
+          <div class="model-answer">
+            <h4><mat-icon>menu_book</mat-icon> Model Answer to Study</h4>
+            <p class="pre-wrap">{{ item.question.modelAnswer }}</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div class="empty" *ngIf="answered.length === 0">
+      <mat-icon>hourglass_empty</mat-icon>
+      <p>No answers yet. Complete the interview to see your results.</p>
+      <button mat-raised-button color="primary" [routerLink]="['/interview', session.id, 'practice']">
+        Continue Interview
+      </button>
+    </div>
+  </ng-container>
+</div>
+
+<ng-template #loadingTemplate>
+  <div class="loading">
+    <mat-spinner></mat-spinner>
+    <p>Loading results...</p>
+  </div>
+</ng-template>

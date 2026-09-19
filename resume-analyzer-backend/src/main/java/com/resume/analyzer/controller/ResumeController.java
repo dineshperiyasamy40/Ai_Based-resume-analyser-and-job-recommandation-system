@@ -98,4 +98,13 @@ public class ResumeController {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
+
+    @GetMapping("/{id}/improvement")
+    public ResponseEntity<?> getImprovement(@AuthenticationPrincipal User user, @PathVariable String id) {
+        try {
+            return ResponseEntity.ok(resumeService.getResumeImprovement(user.getId(), id));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        }
+    }
 }

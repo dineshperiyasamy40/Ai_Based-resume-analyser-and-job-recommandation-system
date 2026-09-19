@@ -1,0 +1,278 @@
+.practice-container {
+  padding: 32px 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  color: #666;
+  margin: 0;
+  text-transform: capitalize;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.error {
+  padding: 16px;
+  background: #ffebee;
+  color: #c62828;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  border-left: 4px solid #c62828;
+}
+
+.question-card {
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+  margin-bottom: 20px;
+
+  mat-card-subtitle {
+    display: flex;
+    gap: 8px;
+    margin: 8px 0 0;
+  }
+
+  .cat-chip {
+    background: #e8eaf6 !important;
+    color: #283593 !important;
+
+    mat-icon {
+      font-size: 15px;
+      height: 15px;
+      width: 15px;
+      margin-right: 4px;
+    }
+  }
+
+  .diff-chip {
+    background: #ede7f6 !important;
+    color: #4527a0 !important;
+    text-transform: capitalize;
+  }
+}
+
+.question-text {
+  font-size: 22px;
+  color: #333;
+  margin: 16px 0;
+  line-height: 1.4;
+}
+
+.tip {
+  display: flex;
+  gap: 10px;
+  padding: 14px;
+  background: #fff8e1;
+  border-radius: 8px;
+  color: #795548;
+  font-size: 14px;
+
+  mat-icon {
+    color: #f57f17;
+    flex-shrink: 0;
+  }
+
+  strong {
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  p {
+    margin: 0;
+    line-height: 1.4;
+  }
+}
+
+.answer-card {
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+  margin-bottom: 20px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.submit-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.feedback-card {
+  border-radius: 12px;
+  border: 2px solid #3f51b5;
+  margin-bottom: 20px;
+
+  mat-card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+.feedback-score {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-bottom: 16px;
+
+  .score-num {
+    font-size: 56px;
+    font-weight: 800;
+    line-height: 1;
+    color: #666;
+
+    &.good {
+      color: #2e7d32;
+    }
+
+    &.medium {
+      color: #ef6c00;
+    }
+
+    &.low {
+      color: #c62828;
+    }
+  }
+
+  .score-label {
+    color: #666;
+    font-size: 16px;
+  }
+}
+
+.feedback-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+
+  @media (max-width: 700px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.fb-col {
+  h4 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 8px;
+    font-size: 15px;
+    color: #333;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+
+    .good-icon {
+      color: #2e7d32;
+    }
+
+    .improve-icon {
+      color: #ef6c00;
+    }
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 20px;
+    font-size: 14px;
+    color: #444;
+    line-height: 1.5;
+
+    li {
+      margin: 4px 0;
+    }
+  }
+}
+
+.suggested {
+  margin-top: 20px;
+  padding: 14px;
+  background: #f1f8e9;
+  border-radius: 8px;
+
+  h4 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 6px;
+    font-size: 15px;
+    color: #33691e;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+    line-height: 1.5;
+    white-space: pre-wrap;
+  }
+}
+
+.next-btn {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 48px;
+  color: #666;
+  text-align: center;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 16px;
+}

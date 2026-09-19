@@ -1,0 +1,321 @@
+.review-container {
+  padding: 32px 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  color: #666;
+  margin: 0;
+  text-transform: capitalize;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.error {
+  padding: 16px;
+  background: #ffebee;
+  color: #c62828;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  border-left: 4px solid #c62828;
+}
+
+.score-card {
+  border-radius: 12px;
+  background: linear-gradient(135deg, #e8eaf6 0%, #f3e5f5 100%);
+  margin-bottom: 24px;
+}
+
+.score-content {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 24px;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}
+
+.overall-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 120px;
+}
+
+.big-num {
+  font-size: 60px;
+  font-weight: 800;
+  line-height: 1;
+  color: #3f51b5;
+
+  &.good {
+    color: #2e7d32;
+  }
+
+  &.medium {
+    color: #ef6c00;
+  }
+
+  &.low {
+    color: #c62828;
+  }
+}
+
+.label {
+  color: #666;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.overall-text {
+  h3 {
+    margin: 0 0 8px;
+    font-size: 20px;
+    color: #333;
+  }
+
+  p {
+    margin: 0;
+    color: #555;
+    line-height: 1.5;
+  }
+}
+
+.section-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: #333;
+  margin: 8px 0 16px;
+}
+
+.qa-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.qa-card {
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+
+  mat-card-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 17px;
+
+    .q-num {
+      background: #3f51b5 !important;
+      color: white !important;
+      font-weight: 600;
+    }
+  }
+
+  mat-card-subtitle {
+    display: flex;
+    gap: 8px;
+    margin: 8px 0 0;
+
+    .cat-chip {
+      background: #e8eaf6 !important;
+      color: #283593 !important;
+    }
+
+    .diff-chip {
+      background: #ede7f6 !important;
+      color: #4527a0 !important;
+      text-transform: capitalize;
+    }
+  }
+}
+
+.feedback-score {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin: 16px 0;
+
+  .score-num {
+    font-size: 40px;
+    font-weight: 800;
+    line-height: 1;
+    color: #666;
+
+    &.good {
+      color: #2e7d32;
+    }
+
+    &.medium {
+      color: #ef6c00;
+    }
+
+    &.low {
+      color: #c62828;
+    }
+  }
+
+  .score-label {
+    color: #666;
+    font-size: 14px;
+  }
+}
+
+.answer-block {
+  padding: 14px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  margin-bottom: 16px;
+
+  h4 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 6px;
+    font-size: 14px;
+    color: #555;
+
+    mat-icon {
+      font-size: 17px;
+      width: 17px;
+      height: 17px;
+    }
+
+    .user-icon {
+      color: #3f51b5;
+    }
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+    line-height: 1.5;
+  }
+}
+
+.strengths, .improvements {
+  margin-bottom: 16px;
+
+  h4 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 6px;
+    font-size: 14px;
+    color: #333;
+
+    mat-icon {
+      font-size: 17px;
+      width: 17px;
+      height: 17px;
+    }
+
+    .good-icon {
+      color: #2e7d32;
+    }
+
+    .improve-icon {
+      color: #ef6c00;
+    }
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 20px;
+    font-size: 14px;
+    color: #444;
+    line-height: 1.5;
+
+    li {
+      margin: 4px 0;
+    }
+  }
+}
+
+.model-answer {
+  padding: 14px;
+  background: #f1f8e9;
+  border-radius: 8px;
+
+  h4 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 6px;
+    font-size: 14px;
+    color: #33691e;
+
+    mat-icon {
+      font-size: 17px;
+      width: 17px;
+      height: 17px;
+    }
+  }
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+    line-height: 1.5;
+  }
+}
+
+.pre-wrap {
+  white-space: pre-wrap;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 48px;
+  color: #666;
+  text-align: center;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 16px;
+}
